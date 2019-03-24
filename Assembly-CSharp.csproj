@@ -56,6 +56,7 @@
      <Compile Include="Assets\Scripts\ActionHandler.cs" />
      <Compile Include="Assets\Scripts\Helpers\TouchGesture.cs" />
      <Compile Include="Assets\Scripts\Models\Tetrimo.cs" />
+     <Compile Include="Assets\Scripts\TetrimoBuilder.cs" />
      <None Include="Assets\Game Assets\Font\Link.txt" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>C:/Users/adkin/Unity/NeuroTetris/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
