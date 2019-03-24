@@ -1,0 +1,13 @@
+# ignore editor configs
+.vs
+.vscode
+
+# ignore deps and build folders ( Unity will build and fetch deps)
+build/
+Build/
+Library/
+library/
+obj/
+Obj/
+temp/
+Temp/
