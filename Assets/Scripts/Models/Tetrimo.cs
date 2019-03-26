@@ -30,7 +30,8 @@ public class Tetrimo : MonoBehaviour
 
     public void ApplyColour()
     {
-        ApplyColour(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
+        Colour = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        ApplyColour(Colour);
     }
 
     public void Rotate()
@@ -41,7 +42,7 @@ public class Tetrimo : MonoBehaviour
         // Move each block by manipulating it's transform coordinates wrt it's parent.
         // The world scale is set to unit length
         int counter = 0;
-        Transform[] ts = this.GetComponentsInChildren<Transform>().Where(x => x.name == "Block").ToArray();
+        Transform[] ts = this.GetComponentsInChildren<Transform>().Where(x => x.name == TetrimoBuilder.BaseBlockGOName).ToArray();
 
         int[,] layout = BlockPositions[CurrentIndex];
         for(int i=layout.GetLowerBound(0); i<=layout.GetUpperBound(0);i++)

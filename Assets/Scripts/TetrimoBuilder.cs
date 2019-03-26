@@ -125,33 +125,28 @@ public class TetrimoBuilder : MonoBehaviour
         {"O", OLayouts}
     };
     public static readonly string[] TetrimoNames = TetrimoLayoutDictionary.Keys.ToArray();
-    
-    public GameObject TetrimoBaseBlock; // Assigned in Unity Editor
-    public Vector2 TetrimoCreationPoint; // Assigned in Unity Editor
+    public static readonly string TetrimoGOName = "Tetrimo";
+    public static readonly string BaseBlockGOName = "Block";
+    private GameObject _tetrimoBaseBlock;
+    private Vector2 _tetrimoCreationPoint;
 
-    // Start is called before the first frame update
-    void Start()
+    public TetrimoBuilder(GameObject tetrimoBaseBlock,Vector2 tetrimoCreationPoint)
     {
-        CreateRandomTetrimo();
+        _tetrimoBaseBlock = tetrimoBaseBlock;
+        _tetrimoCreationPoint = tetrimoCreationPoint;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void CreateTetrimo(string tetrimoName)
+    public GameObject CreateTetrimo(string tetrimoName)
     {
         if (!TetrimoNames.Contains(tetrimoName))
             throw new MissingComponentException($"There is no tetrimo called {tetrimoName}");
-        CreateTetrimo(tetrimoName,TetrimoLayoutDictionary[tetrimoName].First(),0);    
+        return CreateTetrimo(tetrimoName,TetrimoLayoutDictionary[tetrimoName].First(),0);    
     }
 
-    public void CreateTetrimo(string tetrimoName,int[,] tetrimoLayout,int layoutIndex)
+    public GameObject CreateTetrimo(string tetrimoName,int[,] tetrimoLayout,int layoutIndex)
     {
-        GameObject tetrimo = Instantiate(new GameObject("tetrimo"));
-        
+        GameObject tetrimo = new GameObject(TetrimoGOName);
+
         for(int i=tetrimoLayout.GetLowerBound(0); i<=tetrimoLayout.GetUpperBound(0);i++)
             for(int j=tetrimoLayout.GetLowerBound(1); j<=tetrimoLayout.GetUpperBound(1);j++)
                 if (tetrimoLayout[i,j] == 1)
@@ -161,21 +156,20 @@ public class TetrimoBuilder : MonoBehaviour
         t.BlockPositions = TetrimoLayoutDictionary[tetrimoName];
         t.CurrentIndex = layoutIndex;
         t.ApplyColour();
+        return tetrimo;
     }
 
-    public void CreateRandomTetrimo()
+    public GameObject CreateRandomTetrimo()
     {
         string randomTetrimo = TetrimoNames[Random.Range(0,TetrimoNames.Length)];
         int randomIndex = Random.Range(0,TetrimoLayoutDictionary[randomTetrimo].Length);
         int[,] randomLayout = TetrimoLayoutDictionary[randomTetrimo][randomIndex];
-        CreateTetrimo(randomTetrimo,randomLayout,randomIndex);
+        return CreateTetrimo(randomTetrimo,randomLayout,randomIndex);
     }
 
     private void drawBaseBlock(int x, int y, Transform parentTransform)
     {
-        Vector3 v = new Vector3(x,y,0);
-        GameObject baseBlock = Instantiate(TetrimoBaseBlock,v,Quaternion.identity);
-        baseBlock.name = "Block";
-        baseBlock.transform.parent = parentTransform;
+        GameObject baseBlock = Instantiate(_tetrimoBaseBlock,new Vector3(x,y,0),Quaternion.identity,parentTransform);
+        baseBlock.name = BaseBlockGOName;
     }
 }

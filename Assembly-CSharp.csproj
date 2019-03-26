@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\ActionHandler.cs" />
+     <Compile Include="Assets\Scripts\GameHandler.cs" />
      <Compile Include="Assets\Scripts\Helpers\TouchGesture.cs" />
      <Compile Include="Assets\Scripts\Models\Tetrimo.cs" />
      <Compile Include="Assets\Scripts\TetrimoBuilder.cs" />
