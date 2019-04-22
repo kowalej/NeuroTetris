@@ -1,26 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameHandler : MonoBehaviour
-{
-
+{ 
     public GameObject ActiveTetrimo;
     public Vector3Int DropVector3 = new Vector3Int(0,1,0);
     public float TetrimoHangTime = 1.0f;
     public float TetrimoSpeedChangeDelay = 2.0f;
     public int GameScore = 0;
-    private TetrimoBuilder _TetrimoBuilder;
     public GameObject TetrimoBaseBlock; // Assigned in Unity Editor
     public Vector2 TetrimoCreationPoint; // Assigned in Unity Editor
+
+    private TetrimoManager _tetrimoManager; // Can create a shape in the scene.
 
 
     // Start is called before the first frame update
     void Start()
     {
-        _TetrimoBuilder = new TetrimoBuilder(TetrimoBaseBlock,TetrimoCreationPoint);
-        ActiveTetrimo = _TetrimoBuilder.CreateRandomTetrimo();
-        InvokeRepeating("dropActiveTetrimo",TetrimoSpeedChangeDelay, TetrimoHangTime);
+        _tetrimoManager = new TetrimoManager(TetrimoBaseBlock, TetrimoCreationPoint);
+        ActiveTetrimo = _tetrimoManager.CreateRandomTetrimo();
+        InvokeRepeating("dropActiveTetrimo", TetrimoSpeedChangeDelay, TetrimoHangTime);
     }
 
     // Update is called once per frame

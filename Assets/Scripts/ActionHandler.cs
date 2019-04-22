@@ -1,31 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
- using UnityEngine.EventSystems;
+using UnityEngine.EventSystems;
 
-public enum InputControl {
+public enum InputControl
+{
     NONE, // Default.
     LEFT,
     RIGHT,
-    DOWN,
+    FORCE_DOWN,
     DROP,
     ROTATE
 }
 
-public class ActionHandler : MonoBehaviour, IDragHandler, IEndDragHandler
+public class ActionHandler : MonoBehaviour, IDragHandler
 {
-    public InputControl CurrentControl {get; set;}
+    private const int X_DRAG_THRESHOLD = 10;
+    private const int Y_DRAG_THRESHOLD = 10;
+
+    public InputControl CurrentControl { get; set; }
     private bool _isDragging = false;
-    private Vector2 _startDragPosition;
-    private Vector2 _endDragPosition;
+    private Vector2 _lastDragPosition;
+    private Vector2 _currentDragPosition;
     private Vector2 _dragDelta;
-    private const int _dragWindowSize = 10;
-    private int _dragFrameCounter = _dragWindowSize;
 
     // Start is called before the first frame update.
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame.
@@ -35,30 +36,37 @@ public class ActionHandler : MonoBehaviour, IDragHandler, IEndDragHandler
         if (Input.GetKeyDown(KeyCode.LeftArrow) || IsDraggingLeft())
         {
             CurrentControl = InputControl.LEFT;
+            Debug.Log("Left");
         }
         // Move right.
         else if (Input.GetKeyDown(KeyCode.RightArrow) || IsDraggingRight())
         {
             CurrentControl = InputControl.RIGHT;
+            Debug.Log("Right");
         }
         // Push piece down quickly (not supported on mobile).
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            CurrentControl = InputControl.DOWN;
+            CurrentControl = InputControl.FORCE_DOWN;
+            Debug.Log("Force Down");
         }
         // Quick drop piece (space or swipe down)
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || IsDraggingDown()){
+        else if (Input.GetKeyDown(KeyCode.Space) || IsDraggingDown())
+        {
             CurrentControl = InputControl.DROP;
+            Debug.Log("Drop");
         }
         // Rotate (up or tap).
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.touchCount > 0){
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.touchCount > 0)
+        {
             CurrentControl = InputControl.ROTATE;
+            Debug.Log("Rotate");
         }
 
         // Key cancellors.
-        else if (Input.GetKeyUp(KeyCode.LeftArrow) 
+        else if (Input.GetKeyUp(KeyCode.LeftArrow)
             || Input.GetKeyUp(KeyCode.RightArrow)
-            || Input.GetKeyUp(KeyCode.DownArrow) 
+            || Input.GetKeyUp(KeyCode.DownArrow)
             || Input.GetKeyUp(KeyCode.Space)
             || !_isDragging)
         {
@@ -68,43 +76,44 @@ public class ActionHandler : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void OnDrag(PointerEventData eventData)
     {
-        // At the start of the drag, or when we have hit our "window" size, we track a new drag start position.
-        if(!_isDragging || _dragFrameCounter == _dragWindowSize) {
-            _startDragPosition = eventData.position;
-            _isDragging = eventData.dragging;
-        }
-        _endDragPosition = eventData.position;
-        _dragDelta = _endDragPosition - _startDragPosition;
+        _isDragging = eventData.dragging;
+        _lastDragPosition = eventData.position;
+        _currentDragPosition = eventData.position;
+        _dragDelta = _currentDragPosition - _lastDragPosition;
     }
 
-    public void OnDragEnding(PointerEventData eventData) {
+    public void OnDragEnding(PointerEventData eventData)
+    {
         _isDragging = false;
-        _dragFrameCounter = 0;
     }
 
-    private bool IsDraggingLeft() {
+    private bool IsDraggingLeft()
+    {
         if (!_isDragging) return false;
 
-        bool draggingLeft = false;
-
-        return draggingLeft;
+        return
+            _dragDelta.x > 0
+            && Math.Abs(_dragDelta.x) > X_DRAG_THRESHOLD
+            && _dragDelta.y < Y_DRAG_THRESHOLD;
     }
 
     private bool IsDraggingRight()
     {
         if (!_isDragging) return false;
 
-        bool draggingRight = false;
-
-        return draggingRight;
+        return
+            _dragDelta.x > 0
+            && Math.Abs(_dragDelta.x) > X_DRAG_THRESHOLD
+            && _dragDelta.y < Y_DRAG_THRESHOLD;
     }
 
-     private bool IsDraggingDown()
+    private bool IsDraggingDown()
     {
         if (!_isDragging) return false;
 
-        bool draggingRight = false;
-
-        return draggingRight;
+        return
+            _dragDelta.y > 0
+            && Math.Abs(_dragDelta.y) > Y_DRAG_THRESHOLD
+            && _dragDelta.x < X_DRAG_THRESHOLD;
     }
 }
